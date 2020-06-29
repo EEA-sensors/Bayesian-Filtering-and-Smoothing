@@ -2,3 +2,5 @@
 Companion Python code for the book Bayesian Filtering and Smoothing by Simo Särkkä
 
 [![Binder](http://mybinder.org/badge.svg)](https://beta.mybinder.org/v2/gh/AdrienCorenflos/Bayesian-Filtering-and-Smoothing/master)
+
+[Open in Colab](https://colab.research.google.com/github/AdrienCorenflos/Bayesian-Filtering-and-Smoothing)
