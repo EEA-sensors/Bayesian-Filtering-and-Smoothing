@@ -3,8 +3,11 @@ A random utility file used for reproducibility across languages (Octave, Julia, 
 Mersen-Twister 1997
 """
 import numpy.random as rd
+from scipy.special import erfinv
 
 __all__ = ["RandomState"]
+
+SQRT_2 = 2 ** 0.5
 
 
 class RandomState(rd.RandomState):
@@ -13,4 +16,8 @@ class RandomState(rd.RandomState):
     def __init__(self, seed=0):
         if not isinstance(seed, int):
             raise TypeError(f"seed must be an int, '{seed}' of type '{type(seed)}' was passed")
-        super(RandomState, self).__init__(rd.MT19937(rd.SeedSequence(seed)))
+        super(RandomState, self).__init__(seed)
+
+    def randn(self, *args):
+        uniforms = self.rand(*args)
+        return SQRT_2 * erfinv(2 * uniforms - 1)
