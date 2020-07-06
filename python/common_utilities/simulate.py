@@ -4,7 +4,7 @@ A collection of simulation functions for State Space Models.
 import numpy as np
 from .random import RandomState
 
-__all__ = ["generate_ssm"]
+__all__ = ["generate_ssm", "generate_pendulum"]
 
 
 def _atleast2d(*args):
@@ -80,3 +80,61 @@ def generate_ssm(m_0, A, Q, H, R, steps, random_state):
         observations[i, :] = obs
 
     return states, observations
+
+
+def generate_pendulum(m_0, g, Q, dt, R, steps, random_state):
+    """ Samples from a noisy pendulum submitted to a gravitational pull g a random state.
+    The state represents the angle and the angular moment, the measurement is the sine of the angle:
+    the horizontal position of the pendulum.
+
+    Parameters
+    ----------
+    m_0 : (2,) array_like
+        Initial mean of the state
+    g : float
+        Gravitational pull (g-force) in N/kg (earth is ~9.81)
+    Q : (2, 2) array_like
+        Transition covariance coming from the discretisation of the model
+    dt : float
+        Time between each measurement
+    R : float
+        Observation variance
+    steps : int
+        Number of steps simulated
+    random_state : RandomState
+        Random state used for pseudo-random numbers generation
+
+    Returns
+    -------
+    timeline: (steps) ndarray
+        The observation times
+    states : (steps, M) ndarray
+        The true states
+    observations : (steps, N) ndarray
+        The noisy observations
+    """
+    if not isinstance(random_state, RandomState):
+        raise TypeError(f"random_state must be an instance of {RandomState}, "
+                        f"'{random_state}' of type '{type(random_state)}' was given")
+
+    m_0 = np.atleast_1d(m_0)
+    Q = np.atleast_2d(Q)
+
+    states = np.empty((steps, 2))
+    observations = np.empty(steps)
+
+    chol_Q = np.linalg.cholesky(Q)
+    sqrt_R = np.sqrt(R)
+
+    state = m_0
+    for i in range(steps):
+        state = np.array([state[0] + dt * state[1],
+                          state[1] - g * dt * np.sin(state[0])])
+        state = state + chol_Q @ random_state.randn(2)
+        states[i, :] = state
+
+        obs = np.sin(state[0]) + sqrt_R * random_state.randn()
+        observations[i] = obs
+
+    return np.arange(dt, (steps + 1) * dt, dt), states, observations
+
