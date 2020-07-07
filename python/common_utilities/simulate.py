@@ -82,7 +82,7 @@ def generate_ssm(m_0, A, Q, H, R, steps, random_state):
     return states, observations
 
 
-def generate_pendulum(m_0, g, Q, dt, R, steps, random_state):
+def generate_pendulum(m_0, g, Q, dt, R, steps, random_state, cluttered_probability=0., clutter_range=(-2, 2)):
     """ Samples from a noisy pendulum submitted to a gravitational pull g a random state.
     The state represents the angle and the angular moment, the measurement is the sine of the angle:
     the horizontal position of the pendulum.
@@ -103,6 +103,11 @@ def generate_pendulum(m_0, g, Q, dt, R, steps, random_state):
         Number of steps simulated
     random_state : RandomState
         Random state used for pseudo-random numbers generation
+    cluttered_probability : float, optional
+        What are the chances that the observations are cluttered
+    clutter_range: tuple of float
+        When observation is cluttered, it's replaced by a uniform in this range
+
 
     Returns
     -------
@@ -127,13 +132,19 @@ def generate_pendulum(m_0, g, Q, dt, R, steps, random_state):
     sqrt_R = np.sqrt(R)
 
     state = m_0
+
+    cluttered_ind = random_state.binomial(1, cluttered_probability, steps).astype(np.bool_)
+    clutter_multiplier = clutter_range[1] - clutter_range[0]
+
     for i in range(steps):
         state = np.array([state[0] + dt * state[1],
                           state[1] - g * dt * np.sin(state[0])])
         state = state + chol_Q @ random_state.randn(2)
         states[i, :] = state
-
-        obs = np.sin(state[0]) + sqrt_R * random_state.randn()
+        if cluttered_ind[i]:
+            obs = random_state.rand() * clutter_multiplier - clutter_multiplier / 2.
+        else:
+            obs = np.sin(state[0]) + sqrt_R * random_state.randn()
         observations[i] = obs
 
     return np.arange(dt, (steps + 1) * dt, dt), states, observations
