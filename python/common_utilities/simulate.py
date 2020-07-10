@@ -132,9 +132,12 @@ def generate_pendulum(m_0, g, Q, dt, R, steps, random_state, cluttered_probabili
     sqrt_R = np.sqrt(R)
 
     state = m_0
-
-    cluttered_ind = random_state.binomial(1, cluttered_probability, steps).astype(np.bool_)
-    clutter_multiplier = clutter_range[1] - clutter_range[0]
+    if cluttered_probability > 0:
+        cluttered_ind = random_state.binomial(1, cluttered_probability, steps).astype(np.bool_)
+        clutter_multiplier = clutter_range[1] - clutter_range[0]
+    else:
+        cluttered_ind = np.zeros(steps, dtype=np.bool_)
+        clutter_multiplier = 1.
 
     for i in range(steps):
         state = np.array([state[0] + dt * state[1],
