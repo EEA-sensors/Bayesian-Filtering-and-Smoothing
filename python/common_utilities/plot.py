@@ -37,4 +37,4 @@ def plot_car_trajectory(y, x1, label1, x2=None, label2=None):
         ax.plot(x2[:, 0], x2[:, 1], label=label2, color="orange")
     _ = ax.legend()
     _ = ax.set_xlabel("${\it x}_1$")
-    _ = ax.set_ylabel("${\it y}_1$")
+    _ = ax.set_ylabel("${\it x}_2$")
