@@ -3,7 +3,7 @@
 % Track car state with Kalman filter and Rauch-Tung-Striebel
 % smoother as in Examples 6.8 and 12.4 of the book
 %
-% Simo Sarkka and Lennard Svensson (2023), Bayesian Filtering and Smoothing,
+% Simo Sarkka and Lennart Svensson (2023), Bayesian Filtering and Smoothing,
 % Cambridge University Press. 
 %
 % See LICENSE provided with the software.
@@ -97,9 +97,9 @@
     for k=size(kf_m,2)-1:-1:1
         mp = A*kf_m(:,k);
         Pp = A*kf_P(:,:,k)*A'+Q;
-        Ck = kf_P(:,:,k)*A'/Pp; 
-        ms = kf_m(:,k) + Ck*(ms - mp);
-        Ps = kf_P(:,:,k) + Ck*(Ps - Pp)*Ck';
+        Gk = kf_P(:,:,k)*A'/Pp; 
+        ms = kf_m(:,k) + Gk*(ms - mp);
+        Ps = kf_P(:,:,k) + Gk*(Ps - Pp)*Gk';
         rts_m(:,k) = ms;
         rts_P(:,:,k) = Ps;
     end
