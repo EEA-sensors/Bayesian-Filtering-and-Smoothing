@@ -83,6 +83,8 @@
             m = f;
             P = F*P*F' + Q;
         
+            nm = NMMS(:,k);
+
             H = [cos(nm(1)) 0];
             h = sin(nm(1)) + H*(m - nm);
 
