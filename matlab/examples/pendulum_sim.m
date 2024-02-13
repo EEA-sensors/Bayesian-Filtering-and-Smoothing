@@ -53,3 +53,12 @@
     clf;
     plot(T,Y,'g.',T,X(1,:),'r-');
 
+    % Store the data in JSON
+    jstruct = struct('T',T,'X',X,'Y',Y);
+    json = jsonencode(jstruct,'PrettyPrint',true);
+    filename = 'pendulum.json';
+    fid = fopen(filename, 'w');
+    fwrite(fid, json);
+    fclose(fid);
+
+
