@@ -56,12 +56,14 @@
     ylabel('{\it x}_2');
 
     % Store the data in JSON
+    %{
     jstruct = struct('T',T,'X',X,'Y',Y);
     json = jsonencode(jstruct,'PrettyPrint',true);
     filename = 'car_track.json';
     fid = fopen(filename, 'w');
     fwrite(fid, json);
     fclose(fid);
+    %}
 
 %%
 % Kalman filter
