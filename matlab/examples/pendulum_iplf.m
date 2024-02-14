@@ -167,6 +167,7 @@
             a = mum - A * m;
             L = Px - A * P * A';
 
+
             % Note that we store A_k to As(:,:,k+1) etc.
             As(:,:,k) = A;
             as(:,k) = a;
